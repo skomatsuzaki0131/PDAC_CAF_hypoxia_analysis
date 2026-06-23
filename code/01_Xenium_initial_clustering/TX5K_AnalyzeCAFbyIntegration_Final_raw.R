@@ -1,3 +1,11 @@
+# Xenium initial clustering and cell type annotation
+# This script contains the final unrefactored code used for preprocessing,
+# QC filtering, integration, clustering, UMAP visualization, and cell type annotation
+# of the integrated Xenium spatial transcriptomic dataset.
+#
+# Note: This script will be refactored before publication.
+
+
 library(dplyr)
 library(ggplot2)
 library(ggraph)
