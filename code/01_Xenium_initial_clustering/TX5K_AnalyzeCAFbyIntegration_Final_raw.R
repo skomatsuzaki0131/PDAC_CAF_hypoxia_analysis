@@ -370,6 +370,282 @@ clean_gs_label_ForTable <- function(x) {
     str_replace_all("Epithelial mesenchymal transition", "EMT")
 }
 
+
+######################
+## Xenium preprocessing, integration, and initial clustering ------------------
+
+# Xenium countable objects were trimmed in silico to define the analyzed tissue
+# regions. Trimmed count matrices were converted to Seurat objects, QC-filtered
+# per sample, normalized, merged, integrated using Harmony, and clustered.
+
+dir_xenium_source <- "/Volumes/Extreme SSD/Analysis/TEP/Objects"
+dir_xenium_data <- "/Volumes/Extreme SSD/Analysis/Data"
+
+
+XenObj <- LoadXenium(paste0("/Volumes/Extreme SSD/Data/TX5K_",TX), fov = "fov")
+XenObj_Countable <- subset(XenObj, subset=nCount_Xenium > 0)
+saveRDS(XenObj_Countable, file=paste0(dir_xenium_source,"/[XenObj]_TX5K_",tx,"_countable.rds"))
+
+
+tx="02"
+
+
+## Sample-specific trimming coordinates --------------------------------------
+
+sample_roi <- tibble::tribble(
+  ~TX,   ~Xmin, ~Xmax,  ~Ymin, ~Ymax,
+  "01",  1029, 10269,    880,  5236,
+  "02",   997,  5228,    837, 10791,
+  "11",   640,  4345,    746,  4826,
+  "15",   735,  7050,   7055, 10991,
+  "16",   800,  9550,    900,  5700,
+  "19",  5941,  9587,    313,  9303,
+)
+
+sample_roi <- sample_roi %>%
+  dplyr::filter(TX %in% TXnumInteg[seq_len(NumOfSamples)]) %>%
+  dplyr::mutate(TX = factor(TX, levels = TXnumInteg[seq_len(NumOfSamples)])) %>%
+  dplyr::arrange(TX) %>%
+  dplyr::mutate(TX = as.character(TX))
+
+
+## Create QC-filtered Seurat objects for each Xenium sample ------------------
+
+create_qc_filtered_seurat <- function(TX, Xmin, Xmax, Ymin, Ymax,
+                                      Mag, nFeatRNA, nCountRNA) {
+  source_file <- file.path(
+    dir_xenium_source,
+    paste0("[XenObj]_TX5K_", TX, "_countable_coords.rds")
+  )
+  
+  xen_obj <- readRDS(source_file)
+  
+  xen_obj_trimmed <- subset(
+    xen_obj,
+    subset = X > Xmin & X < Xmax & Y > Ymin & Y < Ymax
+  )
+  
+  counts <- GetAssayData(
+    object = xen_obj_trimmed,
+    assay = "Xenium",
+    layer = "counts"
+  )
+  
+  seu_obj <- CreateSeuratObject(
+    counts = counts,
+    assay = "RNA",
+    project = paste0("TX5K_", TX),
+    min.cells = 3,
+    min.features = 0
+  )
+  
+  seu_obj$X <- xen_obj_trimmed$X[colnames(seu_obj)]
+  seu_obj$Y <- xen_obj_trimmed$Y[colnames(seu_obj)]
+  
+  seu_obj <- subset(
+    seu_obj,
+    subset =
+      nFeature_RNA > nFeatRNA[1] &
+      nFeature_RNA < nFeatRNA[2] &
+      nCount_RNA > nCountRNA[1] &
+      nCount_RNA < nCountRNA[2]
+  )
+  
+  seu_obj <- NormalizeData(
+    seu_obj,
+    verbose = FALSE
+  )
+  
+  output_dir <- file.path(
+    dir_xenium_data,
+    paste0("TX5K_", TX),
+    "Objects"
+  )
+  
+  dir.create(
+    output_dir,
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
+  
+  saveRDS(
+    seu_obj,
+    file = file.path(
+      output_dir,
+      paste0(
+        "[SeuObj][TX5K_", TX, "]_Countable_Mag", Mag,
+        "_nFeat", nFeatRNA[1], "-", nFeatRNA[2],
+        "_nCount", nCountRNA[1], "-", nCountRNA[2],
+        ".rds"
+      )
+    )
+  )
+  
+  message(
+    "TX5K_", TX,
+    ": ", format(ncol(xen_obj_trimmed), big.mark = ","),
+    " cells after trimming; ",
+    format(ncol(seu_obj), big.mark = ","),
+    " cells after QC"
+  )
+}
+
+for (i in seq_len(nrow(sample_roi))) {
+  create_qc_filtered_seurat(
+    TX = sample_roi$TX[i],
+    Xmin = sample_roi$Xmin[i],
+    Xmax = sample_roi$Xmax[i],
+    Ymin = sample_roi$Ymin[i],
+    Ymax = sample_roi$Ymax[i],
+    Mag = Mag,
+    nFeatRNA = nFeatRNA,
+    nCountRNA = nCountRNA
+  )
+}
+
+
+## Read and merge QC-filtered Seurat objects --------------------------------
+
+read_xenium_seurat <- function(TX, Mag, nFeatRNA, nCountRNA) {
+  sample_dir <- file.path(
+    dir_xenium_data,
+    paste0("TX5K_", TX),
+    "Objects"
+  )
+  
+  obj <- readRDS(
+    file.path(
+      sample_dir,
+      paste0(
+        "[SeuObj][TX5K_", TX, "]_Countable_Mag", Mag,
+        "_nFeat", nFeatRNA[1], "-", nFeatRNA[2],
+        "_nCount", nCountRNA[1], "-", nCountRNA[2],
+        ".rds"
+      )
+    )
+  )
+  
+  colnames(obj) <- paste(
+    str_remove(obj$orig.ident, pattern = "_"),
+    colnames(obj),
+    sep = "_"
+  )
+  
+  return(obj)
+}
+
+ObjList <- lapply(
+  TXnumInteg[seq_len(NumOfSamples)],
+  function(TX) {
+    read_xenium_seurat(
+      TX = TX,
+      Mag = Mag,
+      nFeatRNA = nFeatRNA,
+      nCountRNA = nCountRNA
+    )
+  }
+)
+
+CombinedObj <- Reduce(
+  function(x, y) merge(x, y = y, add.cell.ids = NULL),
+  ObjList
+)
+
+message("Merged cells: ", format(ncol(CombinedObj), big.mark = ","))
+
+
+## Variable feature selection, scaling, and PCA ------------------------------
+
+CombinedObj <- CombinedObj %>%
+  FindVariableFeatures(
+    selection.method = "vst",
+    nfeatures = 2000
+  )
+
+CombinedObj <- ScaleData(
+  CombinedObj,
+  features = VariableFeatures(CombinedObj)
+)
+
+set.seed(123)
+
+CombinedObj <- RunPCA(
+  CombinedObj,
+  features = VariableFeatures(CombinedObj),
+  npcs = 50,
+  verbose = FALSE
+)
+
+
+## Harmony integration -------------------------------------------------------
+
+set.seed(123)
+
+CombinedObj <- RunHarmony(
+  CombinedObj,
+  group.by.vars = "orig.ident",
+  reduction.use = "pca",
+  dims.use = 1:50,
+  assay.use = "RNA"
+)
+
+
+## Initial clustering --------------------------------------------------------
+
+set.seed(123)
+
+CombinedObj <- CombinedObj %>%
+  RunUMAP(
+    reduction = "harmony",
+    dims = 1:Dim1
+  ) %>%
+  FindNeighbors(
+    reduction = "harmony",
+    dims = 1:Dim1
+  ) %>%
+  FindClusters(
+    resolution = Res1
+  )
+
+
+## Save integrated object ----------------------------------------------------
+
+output_dir <- file.path(DirInteg, "Objects")
+
+dir.create(
+  output_dir,
+  recursive = TRUE,
+  showWarnings = FALSE
+)
+
+saveRDS(
+  CombinedObj,
+  file = file.path(
+    output_dir,
+    paste0(
+      "[SeuObj][",
+      NumOfSamples, "case(",
+      paste(TXnumInteg[seq_len(NumOfSamples)], collapse = ","),
+      ")]_",
+      QCInfo.FileName,
+      "_1stPCA50vf2000_ClustDim",
+      Dim1,
+      "Res",
+      Res1,
+      ".rds"
+    )
+  )
+)
+
+
+
+
+
+
+
+
+
+
 ## Xenium integration and initial clustering ---------------------------------
 
 # Individual Seurat objects were generated and QC-filtered for each sample
@@ -388,11 +664,11 @@ clean_gs_label_ForTable <- function(x) {
 library(harmony)
 
 read_xenium_seurat <- function(TX, Mag, nFeatRNA, nCountRNA) {
-  sample_dir <- file.path(dir_xenium_data, paste0("TX5K_", TX))
   
   obj <- readRDS(
     file.path(
-      sample_dir,
+      dir_xenium_data,
+      paste0("TX5K_", TX),
       "Objects",
       paste0(
         "[SeuObj][TX5K_", TX, "]_Countable_Mag", Mag,
