@@ -10,11 +10,13 @@ This repository contains analysis scripts used for bulk RNA-seq, Xenium spatial 
 
 ```text
 code/
-  01_bulk_RNAseq/
-  02_Xenium_initial_clustering/
-  03_CAF_subclustering/
-  04_spatial_analysis/
-  05_figures/
+  01_Xenium_initial_clustering/
+  02_CAF_subclustering/
+  03_spatial_analysis/
+  04_pseudotime_analysis/
+  05_CAF_isolation_assays/
+  06_bulk_RNAseq/
+  07_figures/
 
 data/
   README_data.md
