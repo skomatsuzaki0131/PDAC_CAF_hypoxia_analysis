@@ -1,49 +1,51 @@
-# History files
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# R and RStudio
 .Rhistory
-.Rapp.history
-
-# Session Data files
 .RData
-.RDataTmp
-
-# User-specific files
 .Ruserdata
-
-# Example code in package build process
-*-Ex.R
-
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
-
-# RStudio files
 .Rproj.user/
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+# Temporary and backup files
+*~
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
+# Logs
+*.log
 
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
+# Office temporary files
+~$*
 
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
+# Inkscape backup and autosave files
+*.svg~
+*.autosave
 
-# R Environment Variables
-.Renviron
+# Python cache
+__pycache__/
+*.pyc
 
-# pkgdown site
-docs/
+# Generated analysis outputs
+outputs/**/*
+!outputs/**/
+!outputs/**/.gitkeep
 
-# translation temp files
-po/*~
+# Local path configuration
+code/00_config/00_00_local_paths.R
 
-# RStudio Connect folder
-rsconnect/
+# Local release checklist
+RELEASE_CHECKLIST.md
+
+# Large processed Xenium objects
+inputs/xenium/objects/*.rds
+
+# Keep the empty directory in the repository
+!inputs/xenium/objects/
+!inputs/xenium/objects/.gitkeep
