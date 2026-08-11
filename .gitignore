@@ -49,3 +49,6 @@ inputs/xenium/objects/*.rds
 # Keep the empty directory in the repository
 !inputs/xenium/objects/
 !inputs/xenium/objects/.gitkeep
+.Rapp.history
+session_info_before_seurat_5_0_2_test_2026-08-08.txt
+session_info_seurat_5_0_2_test_2026-08-08.txt
