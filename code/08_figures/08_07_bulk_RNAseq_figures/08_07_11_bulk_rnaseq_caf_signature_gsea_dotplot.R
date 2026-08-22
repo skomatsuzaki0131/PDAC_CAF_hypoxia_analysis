@@ -194,21 +194,12 @@ caf_signature_gsea_plot <-
     color = "black",
     shape = 21
   ) +
-  #geom_text(
-  #  aes(
-  #    label = .data$Signif,
-  #    vjust = ifelse(.data$p.adjust < 0.05, 0.9, 0.4),
-  #    size = ifelse(.data$p.adjust < 0.05, 8.0, 5.5)
-  #  ),
-  #  fontface = "plain"
-  #) +
   labs(
     x = NULL,
     y = NULL,
     size = "−log10\n(adj.P)"
   ) +
   scale_x_discrete(
-    #expand = expansion(mult = c(0, 0)),
     labels = function(x) {
       label_map <- c(
         Original = "plain('Isolation')",
@@ -219,7 +210,6 @@ caf_signature_gsea_plot <-
     }
   ) +
   scale_y_discrete(
-    #expand = expansion(mult = c(0, 0)),
     labels = c(CAF8 = "CAF-8"),
     position = "right"
   ) +
@@ -249,7 +239,6 @@ caf_signature_gsea_plot <-
       color = "black",
       angle = 45,
       hjust = 1,
-      #vjust = 0,
       size = 13
     ),
     axis.text.y = element_text(

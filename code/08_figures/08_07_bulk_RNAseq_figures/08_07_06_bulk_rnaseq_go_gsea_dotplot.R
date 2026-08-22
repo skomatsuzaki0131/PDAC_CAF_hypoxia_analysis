@@ -84,6 +84,7 @@ biological_process_display_order <- c(
   "cytokine-mediated signaling pathway",
   "inflammatory response",
   "regulation of cytokinesis",
+  "chromosome localization",
   "nuclear division",
   "chromosome segregation"
 )
@@ -259,7 +260,7 @@ bulk_rnaseq_go_gsea_dotplot <- ggplot(
     size = "−log10\n(Adj.P)"
   ) +
   theme(
-    aspect.ratio = 2.089,
+    aspect.ratio = 2.387429,
     axis.text.y = element_text(
       face = "plain",
       color = "black",

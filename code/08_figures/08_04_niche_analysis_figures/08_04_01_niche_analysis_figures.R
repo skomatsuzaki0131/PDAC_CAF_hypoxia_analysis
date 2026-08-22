@@ -691,7 +691,7 @@ caf_subcluster_composition_within_niche_barplot <- ggplot(
   ) +
   theme_classic() +
   theme(
-    aspect.ratio = 0.89,  #  0.795,
+    aspect.ratio = 0.89,
     axis.title = element_text(color = "black"),
     axis.text = element_text(color = "black"),
     axis.ticks.y = element_blank(),

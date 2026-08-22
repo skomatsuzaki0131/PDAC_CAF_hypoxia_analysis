@@ -41,9 +41,6 @@ caf_subcluster_umap_and_sample_composition_dir <- file.path(
   "08_02_01_caf_subcluster_umap_and_sample_composition"
 )
 
-#caf_umap_feature_plots_dir <- 
-#  file.path(caf_subclustering_figure_dir, "caf_subcluster_umap_feature_plots")
-
 
 ## Read CAF subclustering metadata -------------------------------------------
 
@@ -193,8 +190,8 @@ plot_caf_subcluster_umap_pdf <- ggplot(
 
 
 umap_panel_aspect_ratio <- 
-  diff(range(umap_df$umap_2, na.rm = TRUE)) /  # range y
-  diff(range(umap_df$umap_1, na.rm = TRUE))  # range x
+  diff(range(umap_df$umap_2, na.rm = TRUE)) /
+  diff(range(umap_df$umap_1, na.rm = TRUE))
 
 
 plot_caf_subcluster_umap_only_points_png <- ggplot(

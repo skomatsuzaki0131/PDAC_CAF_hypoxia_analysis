@@ -112,13 +112,8 @@ hallmark_pathway_display_order <- c(
   "HALLMARK_MYC_TARGETS_V1",
   "HALLMARK_P53_PATHWAY",
   "HALLMARK_INTERFERON_GAMMA_RESPONSE",
-  #"HALLMARK_INTERFERON_ALPHA_RESPONSE",
   "HALLMARK_INFLAMMATORY_RESPONSE",
-  "HALLMARK_COMPLEMENT"#,
-  #"HALLMARK_TNFA_SIGNALING_VIA_NFKB",
-  #"HALLMARK_TGF_BETA_SIGNALING",
-  #"HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION",
-  #"HALLMARK_MYOGENESIS"
+  "HALLMARK_COMPLEMENT"
 )
 
 missing_display_pathways <- setdiff(
@@ -241,7 +236,7 @@ hallmark_gsea_dotplot <- ggplot(
   ) +
   coord_fixed(ratio = 0.8) +
   theme(
-    aspect.ratio = 3.880 * 8/13,
+    aspect.ratio = 2.387692,
     plot.margin = margin(
       t = 0.83, r = 0.5 , b = 0.83, l = 0.5, unit = "in"
     ),

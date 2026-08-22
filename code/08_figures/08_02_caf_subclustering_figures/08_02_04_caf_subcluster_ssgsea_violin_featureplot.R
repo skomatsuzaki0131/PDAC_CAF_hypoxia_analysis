@@ -92,7 +92,6 @@ stopifnot(identical(
 ))
 stopifnot(!any(is.na(caf_subcluster_plot_colors)))
 
-#feature_score_colors <- c("#B5B5B5", "#EFEFEF", "#5E2A84")
 feature_score_colors <- viridisLite::magma(14)[
   c(1, 2, 3, 4,  10, 11, 12, 13, 14)
 ]

@@ -1,10 +1,10 @@
-tx_id,xenium_sample_id,raw_data_folder,included_in_analysis,x_min,x_max,y_min,y_max,reason
-TX5K_01,Xenium_01,TX5K_01,TRUE,1029,10269,880,5236,Included in the final integrated Xenium analysis cohort
-TX5K_02,Xenium_02,TX5K_02,TRUE,997,5228,837,10791,Included in the final integrated Xenium analysis cohort
-TX5K_11,Xenium_03,TX5K_11,TRUE,640,4345,746,4826,Included in the final integrated Xenium analysis cohort
-TX5K_15,Xenium_04,TX5K_15_16,TRUE,735,7050,7055,10991,Included in the final integrated Xenium analysis cohort
-TX5K_16,Xenium_05,TX5K_15_16,TRUE,800,9550,900,5700,Included in the final integrated Xenium analysis cohort
-TX5K_18,,TX5K_18_19_20_22,FALSE,,,,,Not included in the final integrated analysis because of computational constraints
-TX5K_19,Xenium_06,TX5K_18_19_20_22,TRUE,5941,9587,313,9303,Included in the final integrated Xenium analysis cohort
-TX5K_20,,TX5K_18_19_20_22,FALSE,,,,,Not included in the final integrated analysis because of computational constraints
-TX5K_22,,TX5K_18_19_20_22,FALSE,,,,,Not included in the final integrated analysis because of computational constraints
+tx_id,xenium_sample_id,raw_data_folder,included_in_analysis,x_min,x_max,y_min,y_max
+TX5K_01,Xenium_01,TX5K_01,TRUE,1029,10269,880,5236
+TX5K_02,Xenium_02,TX5K_02,TRUE,997,5228,837,10791
+TX5K_11,Xenium_03,TX5K_11,TRUE,640,4345,746,4826
+TX5K_15,Xenium_04,TX5K_15_16,TRUE,735,7050,7055,10991
+TX5K_16,Xenium_05,TX5K_15_16,TRUE,800,9550,900,5700
+TX5K_18,,TX5K_18_19_20_22,FALSE,,,,
+TX5K_19,Xenium_06,TX5K_18_19_20_22,TRUE,5941,9587,313,9303
+TX5K_20,,TX5K_18_19_20_22,FALSE,,,,
+TX5K_22,,TX5K_18_19_20_22,FALSE,,,,

@@ -82,10 +82,7 @@ row_dendrogram_width <- grid::unit(
 
 annotation_bar_height <- grid::unit(0.236, "in")
 
-heatmap_height <- grid::unit(
-  7.018373 - 2 * 0.236,
-  "in"
-)
+heatmap_height <- grid::unit(6.546373, "in")
 
 column_gap <- grid::unit(0.0315, "in")
 
